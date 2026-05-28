@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useFavorites } from '../hooks/useFavourites';
 import type { Movie } from '../hooks/useFetchMovies';
+import "../styles/MovieCard.css"
 
 import { motion } from 'framer-motion';
 
