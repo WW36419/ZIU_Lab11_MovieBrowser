@@ -11,7 +11,7 @@ import EmptyState from './EmptyState';
 import { useFavorites } from '../hooks/useFavourites';
 import { Divider } from '@mui/material';
 
-import { motion } from 'framer-motion';
+import { motion, Reorder } from 'framer-motion';
 
 
 
@@ -23,6 +23,15 @@ export default function MainBrowser() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMovieIdx, setModalMovieIdx] = useState(-1);
+
+    const container = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
+    };
+    const item = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 },
+    };
 
 
     const openModal = (movieIdx: number|null) => {
@@ -45,6 +54,8 @@ export default function MainBrowser() {
     // Obliczenie listy filmów do wyświetlenia (puste tablice na początek)
     const movies: Movie[] = moviesData?.results || [];
     const favMovies: Movie[] = favData.favorites;
+
+    const setFavourites = favData.toggleFavorite;
     
     // Obsługa wyszukiwania (wywoływana po zmianie kwerendy)
     const handleSearchSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
@@ -112,43 +123,43 @@ export default function MainBrowser() {
 
             {/* Wyświetlanie kart ulubionych filmów*/}
             {(favMovies.length > 0 || searchQuery.trim().length === 0) && !isLoading && (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                >
+                <div>
                     <h2>Ulubione filmy ({favMovies.length})</h2>
                     <Divider />
-                    <ul className='movie-list'>
+                    <Reorder.Group 
+                        className='movie-list'
+                        axis='y' 
+                        values={favMovies} 
+                        onReorder={setFavourites}
+                    >
                         {favMovies.map(movie => (
-                            <li key={movie.id}>
+                            <Reorder.Item key={movie.id} value={movie}>
                                 <MovieCard movie={movie} openDetails={openModal} />
-                            </li>
+                            </Reorder.Item>
                         ))}
-                    </ul>
-                </motion.div>
+                    </Reorder.Group>
+                </div>
             )}
 
 
             {/* Wyświetlanie kart popularnych filmów*/}
             {(movies.length > 0 || searchQuery.trim().length === 0) && !isLoading && (
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3, ease: 'easeOut' }}
-                >
+                <div>
                     <h2>Popuarne filmy</h2>
                     <Divider />
-                    <ul className='movie-list'>
+                    <motion.ul 
+                        className='movie-list'
+                        variants={container} 
+                        initial='hidden' 
+                        animate='visible'
+                    >
                         {movies.map((movie: Movie) => (
-                            <li key={movie.id}>
+                            <motion.li key={movie.id} variants={item}>
                                 <MovieCard movie={movie} openDetails={openModal} />
-                            </li>
+                            </motion.li>
                         ))}
-                    </ul>
-                </motion.div>
+                    </motion.ul>
+                </div>
             )}
 
             {/* Kontrolki Paginacji */}
