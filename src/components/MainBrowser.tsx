@@ -11,7 +11,9 @@ import EmptyState from './EmptyState';
 import { useFavorites } from '../hooks/useFavourites';
 import { Divider } from '@mui/material';
 
-import { motion, Reorder } from 'framer-motion';
+import { motion, Reorder, useReducedMotion } from 'framer-motion';
+//import { AnimatePresence, useReducedMotion } from 'framer-motion';
+//import { Reorder } from 'framer-motion'; // drag & drop listy
 
 
 
@@ -24,12 +26,14 @@ export default function MainBrowser() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMovieIdx, setModalMovieIdx] = useState(-1);
 
+    const shouldReduce = useReducedMotion();
+
     const container = {
         hidden: { opacity: 0 },
         visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
     };
     const item = {
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
         visible: { opacity: 1, y: 0 },
     };
 

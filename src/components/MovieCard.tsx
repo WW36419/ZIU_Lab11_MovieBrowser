@@ -3,7 +3,7 @@ import { useFavorites } from '../hooks/useFavourites';
 import type { Movie } from '../hooks/useFetchMovies';
 import "../styles/MovieCard.css"
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 
 const IMG_BASE = 'https://image.tmdb.org/t/p/w500';
@@ -33,8 +33,9 @@ export function MovieCard({ movie, openDetails }: Props) {
         }
     }, [displayedFav, toggleFavorite, movie]);
 
+    const shouldReduce = useReducedMotion();
     const variants = {
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: shouldReduce ? 0 : 20 },
         visible: { opacity: 1, y: 0 },
     };
 
